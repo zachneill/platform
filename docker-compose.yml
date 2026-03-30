@@ -1,0 +1,73 @@
+services:
+  authelia:
+    image: authelia/authelia:4.39.16
+    container_name: authelia
+    ports:
+      - "9091:9091"
+    env_file:
+      - ./authelia/vars.env
+    networks:
+      - authelia_net
+    restart: unless-stopped
+    volumes:
+      - ./authelia/config:/config
+      - ./certs:/certs:ro
+  redis:
+    image: redis:8.6.2-alpine3.23
+    container_name: authelia-redis
+    restart: unless-stopped
+    networks:
+      - authelia_net
+      
+  semaphore:
+    image: semaphoreui/semaphore:v2.17.26
+    container_name: semaphore
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./semaphore/vars.env
+      - ./secrets.env
+    environment:
+      SEMAPHORE_OIDC_PROVIDERS: > 
+        {
+          "authelia": {
+            "display_name": "Authelia",
+            "provider_url": "https://auth.mgt.zachneill.com",
+            "client_id": "semaphore",
+            "client_secret": "${SECRET_SEMAPHORE_OIDC_CLIENT_SECRET}",
+            "redirect_url": "https://platform.mgt.zachneill.com/api/auth/oidc/authelia/redirect"
+          }
+        }
+    restart: unless-stopped
+    volumes:
+      - semaphore_data:/var/lib/semaphore
+      - semaphore_config:/etc/semaphore
+      - semaphore_tmp:/tmp/semaphore
+      - ./certs:/certs:ro
+  caddy:
+    image: caddybuilds/caddy-cloudflare:2.11.2-alpine
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - ./secrets.env # Contains CLOUDFLARE_API_TOKEN
+    restart: unless-stopped
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./certs:/usr/local/share/ca-certificates:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    extra_hosts: 
+      - "host.docker.internal:host-gateway"
+    command: sh -c "update-ca-certificates && caddy run --config /etc/caddy/Caddyfile"
+volumes:
+  semaphore_data:
+  semaphore_config:
+  semaphore_tmp:
+  caddy_data:
+  caddy_config:
+
+networks:
+  authelia_net:
+    driver: bridge

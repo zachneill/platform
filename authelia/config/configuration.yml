@@ -1,0 +1,135 @@
+webauthn.disable: true 
+certificates_directory: /certs
+server:
+  address: tcp://0.0.0.0:9091
+  tls:
+    key: /certs/platform.key
+    certificate: /certs/platform.pem
+log:
+  level: info
+totp:
+  disable: false
+  issuer: zachneill.com
+  algorithm: sha1
+  digits: 6
+  skew: 1
+  secret_size: 32
+  period: 30
+  disable_reuse_security_policy: false
+identity_validation:
+  reset_password:
+    jwt_secret: supersecret_jwt
+
+authentication_backend:
+  ldap:
+    address: ldaps://ad.mgt.zachneill.com:636
+    implementation: activedirectory
+
+    timeout: 5s
+    start_tls: false
+
+    base_dn: DC=mgt,DC=lan
+
+    user: CN=Authelia User,OU=ServiceAccounts,DC=mgt,DC=lan
+    # password: SET IN AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD
+
+    users_filter: "(&(|({username_attribute}={input})({mail_attribute}={input}))(sAMAccountType=805306368)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(!(pwdLastSet=0))(|(!(accountExpires=*))(accountExpires=0)(accountExpires>={date-time:microsoft-nt})))"
+    groups_filter: "(&(member={dn})(|(sAMAccountType=268435456)(sAMAccountType=536870912)))"
+    attributes:
+      username: sAMAccountName
+      display_name: displayName
+      mail: mail
+      group_name: cn
+      member_of: memberOf
+      given_name: givenName
+      family_name: surname
+      distinguished_name: distinguishedName
+    tls:
+      skip_verify: false 
+
+access_control:
+  default_policy: one_factor
+  rules:
+    - domain: "*.mgt.lan"
+      policy: one_factor
+    - domain: "*.mgt.zachneill.com"
+      policy: one_factor
+session:
+  name: authelia_session
+  secret: supersecret_session
+  expiration: 1h
+  inactivity: 5m
+
+  cookies:
+    - domain: mgt.zachneill.com
+      authelia_url: https://auth.mgt.zachneill.com
+
+storage:
+  local:
+    path: /config/db.sqlite3
+  # encryption_key: SET IN AUTHELIA_STORAGE_LOCAL_ENCRYPTION_KEY
+
+notifier:
+  smtp:
+    address: submissions://smtp.zoho.com:465
+    username: noreply@zachneill.com
+    # password: SET IN AUTHELIA_NOTIFIER_SMTP_PASSWORD
+    sender: noreply@zachneill.com
+    
+identity_providers:
+  oidc:
+    authorization_policies:
+      no_2fa:
+        default_policy: one_factor
+        rules: 
+          - subject: "user:*"
+            policy: one_factor
+      devtools:
+        default_policy: deny
+        rules:
+          - subject: 
+              - "group:DevTools_Operators"
+              - "group:DevTools_Admins"
+              - "group:DevTools_ReadOnly"
+            policy: one_factor
+
+    claims_policies:
+      awx:
+        id_token: [preferred_username, name, email, groups]
+      semaphore:
+        id_token: [preferred_username, name, email, email_verified, alt_emails, groups]
+    hmac_secret: supersecret_oidc
+    jwks: 
+      - key_id: main
+        algorithm: RS256
+        use: sig
+        key: {{ secret "/config/jwks.pem" | mindent 10 "|" | msquote }}
+
+    clients:
+      - client_id: awx
+        client_name: AWX
+        client_secret: $pbkdf2-sha512$310000$BFgT3eC0huqvCmfhdvXhCw$1Pv4gGnFA9RjzlsepP34CfIn3cEjkTcHP1KmkcjEqQs9K2NBSvDDeWw5tbHETfrBUdw2T7NDXWaDFm0pFO.JTw
+        claims_policy: awx
+        public: false
+        require_pkce: false 
+        response_types: [ code]
+        grant_types: [ authorization_code ]
+        access_token_signed_response_alg: none
+        token_endpoint_auth_method: client_secret_basic
+        redirect_uris:
+          - http://awx.mgt.zachneill.com/sso/complete/oidc/
+        authorization_policy: devtools
+        scopes: [openid, profile, email, groups]
+        userinfo_signed_response_alg: none
+
+      - client_id: semaphore
+        client_name: Semaphore
+        client_secret: $pbkdf2-sha512$310000$ZvPS9J4Qg57RvhrGQFenpw$75RV9bP.9j8k0J8yz3Rk1x/W9P4hU4SFikICzmwQuG.FdPsQcyiYmCsOkRWj3J/O9UJOozeXBLgomEKgoHEOlw
+        claims_policy: semaphore
+        public: false
+        authorization_policy: devtools
+        redirect_uris:
+          - https://platform.mgt.zachneill.com/api/auth/oidc/authelia/redirect
+        scopes: [openid, profile, email, groups]
+        userinfo_signed_response_alg: none
+        # token_endpoint_auth_method: client_secret_post
