@@ -6,6 +6,7 @@ services:
       - "9091:9091"
     env_file:
       - ./authelia/vars.env
+      - ./secrets.env
     networks:
       - authelia_net
     restart: unless-stopped
@@ -27,17 +28,6 @@ services:
     env_file:
       - ./semaphore/vars.env
       - ./secrets.env
-    environment:
-      SEMAPHORE_OIDC_PROVIDERS: > 
-        {
-          "authelia": {
-            "display_name": "Authelia",
-            "provider_url": "https://auth.mgt.zachneill.com",
-            "client_id": "semaphore",
-            "client_secret": "${SECRET_SEMAPHORE_OIDC_CLIENT_SECRET}",
-            "redirect_url": "https://platform.mgt.zachneill.com/api/auth/oidc/authelia/redirect"
-          }
-        }
     restart: unless-stopped
     volumes:
       - semaphore_data:/var/lib/semaphore

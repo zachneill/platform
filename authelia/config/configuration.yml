@@ -67,7 +67,7 @@ session:
 storage:
   local:
     path: /config/db.sqlite3
-  # encryption_key: SET IN AUTHELIA_STORAGE_LOCAL_ENCRYPTION_KEY
+  # encryption_key: SET IN AUTHELIA_STORAGE_ENCRYPTION_KEY
 
 notifier:
   smtp:

@@ -1,3 +1,4 @@
 jwks.pem
 secrets.env 
 certs/
+db.sqlite3
