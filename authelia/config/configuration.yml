@@ -64,6 +64,11 @@ session:
     - domain: mgt.zachneill.com
       authelia_url: https://auth.mgt.zachneill.com
 
+definitions: 
+  user_attributes: 
+    vaultwarden_roles:
+      expression: '"DevTools_Admins" in groups ? ["admin"] : "DevTools_Operators" in groups ? ["user"] : [""]'
+
 storage:
   local:
     path: /config/db.sqlite3
@@ -98,6 +103,15 @@ identity_providers:
         id_token: [preferred_username, name, email, groups]
       semaphore:
         id_token: [preferred_username, name, email, email_verified, alt_emails, groups]
+      vaultwarden:
+        id_token: ['vaultwarden_roles']
+        custom_claims: 
+          vaultwarden_roles: {}
+
+    scopes:
+      vaultwarden: 
+        claims: ['vaultwarden_roles']
+
     hmac_secret: supersecret_oidc
     jwks: 
       - key_id: main
@@ -133,3 +147,19 @@ identity_providers:
         scopes: [openid, profile, email, groups]
         userinfo_signed_response_alg: none
         # token_endpoint_auth_method: client_secret_post
+      
+      - client_id: vaultwarden
+        client_name: Vaultwarden
+        client_secret: $pbkdf2-sha512$310000$4ucai85WkJIk/12mikcVbQ$WYWxM32zo0Wy3F7L5er9ggx0zQhNkRT40cMqut.3fXCRISnVgl.qenrGP1XdxzJouE/6cs3ATxoTy6Aeype5Vg
+        claims_policy: vaultwarden
+        public: false
+        authorization_policy: devtools
+        redirect_uris:
+          - https://vault.mgt.zachneill.com/identity/connect/oidc-signin
+        # scopes: [openid, profile, email, groups, vaultwarden]
+        scopes: [openid, offline_access, profile, email, groups, vaultwarden]
+        response_types: [ code ]
+        userinfo_signed_response_alg: none
+        grant_types: [ authorization_code, refresh_token ]
+        require_pkce: true
+        pkce_challenge_method: 'S256'

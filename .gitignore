@@ -3,3 +3,4 @@ secrets.env
 certs/
 db.sqlite3
 notification.txt
+vw-data/

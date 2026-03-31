@@ -51,6 +51,18 @@ services:
     extra_hosts: 
       - "host.docker.internal:host-gateway"
     command: sh -c "update-ca-certificates && caddy run --config /etc/caddy/Caddyfile"
+
+  vaultwarden:
+    image: vaultwarden/server:1.35.4-alpine
+    container_name: vaultwarden
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    env_file:
+      - ./vaultwarden/vars.env
+      - ./secrets.env # SSO_CLIENT_SECRET, ADMIN_TOKEN
+    volumes:
+      - ./vaultwarden/vw-data:/data
 volumes:
   semaphore_data:
   semaphore_config:

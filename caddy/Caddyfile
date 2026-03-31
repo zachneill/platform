@@ -7,3 +7,6 @@ platform.mgt.zachneill.com {
 auth.mgt.zachneill.com {
 	reverse_proxy https://auth.mgt.zachneill.com:9091
 }
+vault.mgt.zachneill.com {
+  reverse_proxy vaultwarden:8000
+}
