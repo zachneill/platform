@@ -34,6 +34,9 @@ services:
       - semaphore_config:/etc/semaphore
       - semaphore_tmp:/tmp/semaphore
       - ./certs:/certs:ro
+    networks:
+      - authelia_net
+
   caddy:
     image: caddybuilds/caddy-cloudflare:2.11.2-alpine
     container_name: caddy
@@ -51,6 +54,8 @@ services:
     extra_hosts: 
       - "host.docker.internal:host-gateway"
     command: sh -c "update-ca-certificates && caddy run --config /etc/caddy/Caddyfile"
+    networks:
+      - authelia_net
 
   vaultwarden:
     image: vaultwarden/server:1.35.4-alpine
@@ -60,9 +65,12 @@ services:
     restart: unless-stopped
     env_file:
       - ./vaultwarden/vars.env
-      - ./secrets.env # SSO_CLIENT_SECRET, ADMIN_TOKEN
+      - ./secrets.env # SSO_CLIENT_SECRET, ADMIN_TOKEN, SMTP_PASSWORD
     volumes:
       - ./vaultwarden/vw-data:/data
+    networks:
+      - authelia_net
+
 volumes:
   semaphore_data:
   semaphore_config:

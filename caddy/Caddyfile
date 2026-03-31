@@ -2,10 +2,10 @@
 	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 }
 platform.mgt.zachneill.com {
-	reverse_proxy https://platform.mgt.zachneill.com:3000
+	reverse_proxy semaphore:3000
 }
 auth.mgt.zachneill.com {
-	reverse_proxy https://auth.mgt.zachneill.com:9091
+	reverse_proxy authelia:9091
 }
 vault.mgt.zachneill.com {
   reverse_proxy vaultwarden:8000

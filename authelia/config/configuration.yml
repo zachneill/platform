@@ -2,9 +2,9 @@ webauthn.disable: true
 certificates_directory: /certs
 server:
   address: tcp://0.0.0.0:9091
-  tls:
-    key: /certs/platform.key
-    certificate: /certs/platform.pem
+  # tls:
+  #   key: /certs/platform.key
+  #   certificate: /certs/platform.pem
 log:
   level: info
 totp:
@@ -24,15 +24,11 @@ authentication_backend:
   ldap:
     address: ldaps://ad.mgt.zachneill.com:636
     implementation: activedirectory
-
     timeout: 5s
     start_tls: false
-
     base_dn: DC=mgt,DC=lan
-
     user: CN=Authelia User,OU=ServiceAccounts,DC=mgt,DC=lan
     # password: SET IN AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD
-
     users_filter: "(&(|({username_attribute}={input})({mail_attribute}={input}))(sAMAccountType=805306368)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(!(pwdLastSet=0))(|(!(accountExpires=*))(accountExpires=0)(accountExpires>={date-time:microsoft-nt})))"
     groups_filter: "(&(member={dn})(|(sAMAccountType=268435456)(sAMAccountType=536870912)))"
     attributes:
@@ -57,8 +53,11 @@ access_control:
 session:
   name: authelia_session
   secret: supersecret_session
-  expiration: 1h
-  inactivity: 5m
+  expiration: 8h
+  inactivity: 1h
+  redis:
+    host: authelia-redis
+    port: 6379
 
   cookies:
     - domain: mgt.zachneill.com
@@ -76,7 +75,7 @@ storage:
 
 notifier:
   smtp:
-    address: submissions://smtp.zoho.com:465
+    address: submission://smtp.zoho.com:587
     username: noreply@zachneill.com
     # password: SET IN AUTHELIA_NOTIFIER_SMTP_PASSWORD
     sender: noreply@zachneill.com
