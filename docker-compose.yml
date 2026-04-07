@@ -13,6 +13,9 @@ services:
     volumes:
       - ./authelia/config:/config
       - ./certs:/certs:ro
+    depends_on:
+      - redis
+
   redis:
     image: redis:8.6.2-alpine3.23
     container_name: authelia-redis
@@ -71,7 +74,53 @@ services:
     networks:
       - authelia_net
 
+  loki:
+    image: grafana/loki:3.7.1
+    container_name: loki
+    command: -config.file=/etc/loki/config.yml
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/config.yml:ro
+      - loki-data:/loki
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+    networks:
+      - authelia_net
+
+  grafana:
+    image: grafana/grafana:12.4.2
+    container_name: grafana
+    env_file:
+      - ./secrets.env # GF_SECURITY_ADMIN_PASSWORD
+      - ./grafana/vars.env 
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - loki
+    restart: unless-stopped
+    networks:
+      - authelia_net
+
+  alloy:
+    image: grafana/alloy:v1.15.0
+    container_name: alloy
+    command: run /etc/alloy/config.alloy
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/log:/var/log:ro
+      - /hdds/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - loki
+    restart: unless-stopped
+    networks:
+      - authelia_net
+
 volumes:
+  grafana-data:
+  loki-data:
   semaphore_data:
   semaphore_config:
   semaphore_tmp:

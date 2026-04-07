@@ -10,3 +10,9 @@ auth.mgt.zachneill.com {
 vault.mgt.zachneill.com {
   reverse_proxy vaultwarden:8000
 }
+monitoring.mgt.zachneill.com {
+  reverse_proxy grafana:8000
+}
+loki.mgt.zachneill.com {
+  reverse_proxy loki:3100
+}
