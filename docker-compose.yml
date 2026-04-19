@@ -95,6 +95,7 @@ services:
       - ./grafana/vars.env 
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     ports:
       - "3001:3000"
     depends_on:
