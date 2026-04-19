@@ -88,7 +88,7 @@ services:
       - authelia_net
 
   grafana:
-    image: grafana/grafana:12.4.2
+    image: grafana/grafana:13.0.1
     container_name: grafana
     env_file:
       - ./secrets.env # GF_SECURITY_ADMIN_PASSWORD

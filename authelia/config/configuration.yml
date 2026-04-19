@@ -154,7 +154,7 @@ identity_providers:
         public: false
         authorization_policy: devtools
         redirect_uris:
-          - https://vault.mgt.zachneill.com/identity/connect/oidc-signin
+          - https://vw.mgt.zachneill.com/identity/connect/oidc-signin
         # scopes: [openid, profile, email, groups, vaultwarden]
         scopes: [openid, offline_access, profile, email, groups, vaultwarden]
         response_types: [ code ]
