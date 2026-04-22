@@ -3,8 +3,8 @@ certificates_directory: /certs
 server:
   address: tcp://0.0.0.0:9091
   # tls:
-  #   key: /certs/platform.key
-  #   certificate: /certs/platform.pem
+  #   key: /certs/MGTWildcard.key
+  #   certificate: /certs/MGTWildcard.pem
 log:
   level: info
 totp:
@@ -130,7 +130,7 @@ identity_providers:
         access_token_signed_response_alg: none
         token_endpoint_auth_method: client_secret_basic
         redirect_uris:
-          - http://awx.mgt.zachneill.com/sso/complete/oidc/
+          - https://awx.mgt.zachneill.com/sso/complete/oidc/
         authorization_policy: devtools
         scopes: [openid, profile, email, groups]
         userinfo_signed_response_alg: none
@@ -162,3 +162,20 @@ identity_providers:
         grant_types: [ authorization_code, refresh_token ]
         require_pkce: true
         pkce_challenge_method: 'S256'
+
+      - client_id: jellyfin
+        client_name: Jellyfin
+        client_secret: $pbkdf2-sha512$310000$YnybyzIlbbo6XQLIGUfU6Q$ZFNYFkd6rIPoGJE02BWYEJfNG/jzCRgS4ex1Ji1qAfXpUARTUi.YId6JTfZh1ROs1K2aSgBBiFo822IQAH7kCw
+        claims_policy: jellyfin
+        public: false
+        authorization_policy: no_2fa
+        redirect_uris:
+          - https://jellyfin.mgt.zachneill.com/sso/OID/redirect/authelia
+        scopes: [openid, profile, email, groups]
+        response_types: [ code ]
+        userinfo_signed_response_alg: none
+        access_token_signed_response_alg: 'none'
+        grant_types: [ authorization_code ]
+        require_pkce: true
+        pkce_challenge_method: 'S256'
+        token_endpoint_auth_method: 'client_secret_post'
