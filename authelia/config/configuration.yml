@@ -166,7 +166,6 @@ identity_providers:
       - client_id: jellyfin
         client_name: Jellyfin
         client_secret: $pbkdf2-sha512$310000$YnybyzIlbbo6XQLIGUfU6Q$ZFNYFkd6rIPoGJE02BWYEJfNG/jzCRgS4ex1Ji1qAfXpUARTUi.YId6JTfZh1ROs1K2aSgBBiFo822IQAH7kCw
-        claims_policy: jellyfin
         public: false
         authorization_policy: no_2fa
         redirect_uris:
