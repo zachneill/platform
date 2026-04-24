@@ -67,6 +67,8 @@ definitions:
   user_attributes: 
     vaultwarden_roles:
       expression: '"DevTools_Admins" in groups ? ["admin"] : "DevTools_Operators" in groups ? ["user"] : [""]'
+    is_nextcloud_admin:
+      expression: '"Nextcloud_Admins" in groups'
 
 storage:
   local:
@@ -106,10 +108,15 @@ identity_providers:
         id_token: ['vaultwarden_roles']
         custom_claims: 
           vaultwarden_roles: {}
+      nextcloud:
+        custom_claims:
+          is_nextcloud_admin: {}
 
     scopes:
       vaultwarden: 
         claims: ['vaultwarden_roles']
+      nextcloud:
+        claims: ['is_nextcloud_admin']
 
     hmac_secret: supersecret_oidc
     jwks: 
@@ -178,3 +185,22 @@ identity_providers:
         require_pkce: true
         pkce_challenge_method: 'S256'
         token_endpoint_auth_method: 'client_secret_post'
+      
+      - client_id: nextcloud
+        client_name: Nextcloud
+        client_secret: $pbkdf2-sha512$310000$nYCsaWSABXBAMA59cHcSkA$wWwyuV89hevvqs/5spZ4ipHNGrGCOruwQ2ucysNz17pMgGnxMyWcQwrsMi40.mGmvTLkjgECraxSjTq2Z3n/4g
+        public: false
+        authorization_policy: no_2fa
+        require_pkce: true
+        pkce_challenge_method: 'S256'
+        claims_policy: nextcloud
+        redirect_uris:
+          - 'https://nextcloud.mgt.zachneill.com/apps/oidc_login/oidc'
+        scopes: [ openid, profile, email, groups, nextcloud ]
+        response_types:
+          - 'code'
+        grant_types:
+          - 'authorization_code'
+        access_token_signed_response_alg: 'none'
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'client_secret_basic'
