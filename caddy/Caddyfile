@@ -13,6 +13,9 @@ vw.mgt.zachneill.com {
 monitoring.mgt.zachneill.com {
   reverse_proxy grafana:3000
 }
+grafana.mgt.zachneill.com {
+  reverse_proxy grafana:3000
+}
 loki.mgt.zachneill.com {
   reverse_proxy loki:3100
 }

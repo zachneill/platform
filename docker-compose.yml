@@ -11,8 +11,9 @@ services:
       - authelia_net
     restart: unless-stopped
     volumes:
-      - ./authelia/config:/config
-      - ./certs:/certs:ro
+      - ./authelia/config/configuration.yml:/config/configuration.yml
+      - ./certs/jwks.key:/config/jwks.key
+      - ./certs/rootCA.crt:/certs/rootCA.crt:ro
     depends_on:
       - redis
 
@@ -36,7 +37,7 @@ services:
       - semaphore_data:/var/lib/semaphore
       - semaphore_config:/etc/semaphore
       - semaphore_tmp:/tmp/semaphore
-      - ./certs:/certs:ro
+      - ./certs/rootCA.crt:/certs/rootCA.crt:ro
     networks:
       - authelia_net
 
@@ -51,7 +52,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./certs:/usr/local/share/ca-certificates:ro
+      - ./certs/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt:ro
       - caddy_data:/data
       - caddy_config:/config
     extra_hosts: 
@@ -70,7 +71,7 @@ services:
       - ./vaultwarden/vars.env
       - ./secrets.env # SSO_CLIENT_SECRET, ADMIN_TOKEN, SMTP_PASSWORD
     volumes:
-      - ./vaultwarden/vw-data:/data
+      - vw-data:/data
     networks:
       - authelia_net
 
@@ -91,8 +92,8 @@ services:
     image: grafana/grafana:13.0.1
     container_name: grafana
     env_file:
-      - ./secrets.env # GF_SECURITY_ADMIN_PASSWORD
       - ./grafana/vars.env 
+      - ./secrets.env # GF_SECURITY_ADMIN_PASSWORD
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
@@ -127,6 +128,7 @@ volumes:
   semaphore_tmp:
   caddy_data:
   caddy_config:
+  vw-data:
 
 networks:
   authelia_net:

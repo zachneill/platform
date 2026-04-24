@@ -4,7 +4,7 @@ server:
   address: tcp://0.0.0.0:9091
   # tls:
   #   key: /certs/MGTWildcard.key
-  #   certificate: /certs/MGTWildcard.pem
+  #   certificate: /certs/MGTWildcard.key
 log:
   level: info
 totp:
@@ -123,7 +123,7 @@ identity_providers:
       - key_id: main
         algorithm: RS256
         use: sig
-        key: {{ secret "/config/jwks.pem" | mindent 10 "|" | msquote }}
+        key: {{ secret "/config/jwks.key" | mindent 10 "|" | msquote }}
 
     clients:
       - client_id: awx
@@ -180,7 +180,7 @@ identity_providers:
         scopes: [openid, profile, email, groups]
         response_types: [ code ]
         userinfo_signed_response_alg: none
-        access_token_signed_response_alg: 'none'
+        access_token_signed_response_alg: none
         grant_types: [ authorization_code ]
         require_pkce: true
         pkce_challenge_method: 'S256'
@@ -197,6 +197,28 @@ identity_providers:
         redirect_uris:
           - 'https://nextcloud.mgt.zachneill.com/apps/oidc_login/oidc'
         scopes: [ openid, profile, email, groups, nextcloud ]
+        response_types:
+          - 'code'
+        grant_types:
+          - 'authorization_code'
+        access_token_signed_response_alg: 'none'
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'client_secret_basic'
+
+      - client_id: filebrowser
+        client_name: FileBrowser Quantum
+        client_secret: $pbkdf2-sha512$310000$h.BE6vsoVSs71jw5QSkRAg$6Q8NtKlzfjFjbuxPdGdN3LO2jjdly/aiJUFdreSTKIHVA4sVzNRc0k3AfdHw6.sbnvpwO8.2LAXKTb6wviJGyg
+        public: false
+        authorization_policy: no_2fa
+        require_pkce: false
+        pkce_challenge_method: ''
+        redirect_uris:
+          - 'https://filebrowser.mgt.zachneill.com/api/auth/oidc/callback'
+        scopes:
+          - 'openid'
+          - 'profile'
+          - 'groups'
+          - 'email'
         response_types:
           - 'code'
         grant_types:
