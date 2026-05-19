@@ -1,18 +1,18 @@
 {
 	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 }
-platform.mgt.zachneill.com {
+platform.aut.zachneill.com {
 	reverse_proxy semaphore:3000
 }
-auth.mgt.zachneill.com {
+auth.aut.zachneill.com {
 	reverse_proxy authelia:9091
 }
-vw.mgt.zachneill.com {
+vw.aut.zachneill.com {
   reverse_proxy vaultwarden:8000
 }
-grafana.mgt.zachneill.com {
+grafana.aut.zachneill.com {
   reverse_proxy grafana:3000
 }
-loki.mgt.zachneill.com {
+loki.aut.zachneill.com {
   reverse_proxy loki:3100
 }
