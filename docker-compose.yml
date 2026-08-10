@@ -13,7 +13,7 @@ services:
     volumes:
       - ./authelia/config/configuration.yml:/config/configuration.yml
       - ./certs/jwks.key:/config/jwks.key
-      - ./certs/rootCA.crt:/certs/rootCA.crt:ro
+      - ./certs/rootCA.pem:/certs/rootCA.pem:ro
     depends_on:
       - redis
 
@@ -37,7 +37,7 @@ services:
       - semaphore_data:/var/lib/semaphore
       - semaphore_config:/etc/semaphore
       - semaphore_tmp:/tmp/semaphore
-      - ./certs/rootCA.crt:/certs/rootCA.crt:ro
+      - ./certs/rootCA.pem:/certs/rootCA.pem:ro
     networks:
       - authelia_net
 
@@ -52,7 +52,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./certs/rootCA.crt:/usr/local/share/ca-certificates/rootCA.crt:ro
+      - ./certs/rootCA.pem:/usr/local/share/ca-certificates/rootCA.pem:ro
       - caddy_data:/data
       - caddy_config:/config
     extra_hosts: 

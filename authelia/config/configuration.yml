@@ -3,8 +3,8 @@ certificates_directory: /certs
 server:
   address: tcp://0.0.0.0:9091
   # tls:
-  #   key: /certs/AUTWildcard.key
-  #   certificate: /certs/AUTWildcard.key
+  #   key:
+  #   certificate: 
 log:
   level: info
 totp:
