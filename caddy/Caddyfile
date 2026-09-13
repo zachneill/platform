@@ -16,3 +16,6 @@ grafana.aut.zachneill.com {
 loki.aut.zachneill.com {
   reverse_proxy loki:3100
 }
+git.aut.zachneill.com {
+  reverse_proxy forgejo:3000
+}

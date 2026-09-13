@@ -111,6 +111,8 @@ identity_providers:
       nextcloud:
         custom_claims:
           is_nextcloud_admin: {}
+      forgejo:
+        id_token: [preferred_username, name, email, groups]
 
     scopes:
       vaultwarden: 
@@ -219,6 +221,29 @@ identity_providers:
           - 'profile'
           - 'groups'
           - 'email'
+        response_types:
+          - 'code'
+        grant_types:
+          - 'authorization_code'
+        access_token_signed_response_alg: 'none'
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'client_secret_basic'
+
+      - client_id: 'forgejo'
+        client_name: 'Forgejo'
+        client_secret: '$pbkdf2-sha512$310000$ZNHedtuWS53pVoSlI.h0EQ$EUTjLsPS7qWdg6yo3/mGwObXhkOVVkMXYOC/Zgun1hUUO9tw1YHPbQHjQaYPAxhLEnecdN7xGn2zzvds9QbNsA'
+        public: false
+        claims_policy: forgejo
+        authorization_policy: no_2fa
+        require_pkce: false
+        pkce_challenge_method: ''
+        redirect_uris:
+          - 'https://git.aut.zachneill.com/user/oauth2/authelia/callback'
+        scopes:
+          - 'openid'
+          - 'email'
+          - 'profile'
+          - 'groups'
         response_types:
           - 'code'
         grant_types:

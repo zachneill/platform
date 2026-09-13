@@ -1,6 +1,6 @@
 services:
   authelia:
-    image: authelia/authelia:4.39.16
+    image: authelia/authelia:4.39.26
     container_name: authelia
     ports:
       - "9091:9091"
@@ -119,6 +119,22 @@ services:
     restart: unless-stopped
     networks:
       - authelia_net
+
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:15.0.8
+    container_name: forgejo
+    env_file:
+      - ./forgejo/vars.env
+    restart: unless-stopped
+    networks:
+      - authelia_net
+    volumes:
+      - ./forgejo/data:/data
+      - ./certs/rootCA.pem:/certs/rootCA.pem:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3002:3000"
+      - "222:22"
 
 volumes:
   grafana-data:

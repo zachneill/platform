@@ -1,3 +1,4 @@
 secrets.env 
 *.key
 vw-data/
+forgejo/data/
