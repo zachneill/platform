@@ -158,7 +158,7 @@ identity_providers:
       
       - client_id: vaultwarden
         client_name: Vaultwarden
-        client_secret: $pbkdf2-sha512$310000$4ucai85WkJIk/12mikcVbQ$WYWxM32zo0Wy3F7L5er9ggx0zQhNkRT40cMqut.3fXCRISnVgl.qenrGP1XdxzJouE/6cs3ATxoTy6Aeype5Vg
+        client_secret: $pbkdf2-sha512$310000$oPn9M1awxNjK/qWKdmSMTg$pKY9d2CO.ck6ilujVuf/H13LHhe2RTW.2P.rDjojL7DQaQaNBnPLw/TjoF2cqPOroEElbgG.lFmUppfaUF3kfw
         claims_policy: vaultwarden
         public: false
         authorization_policy: devtools
