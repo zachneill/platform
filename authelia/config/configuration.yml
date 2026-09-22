@@ -207,31 +207,9 @@ identity_providers:
         userinfo_signed_response_alg: 'none'
         token_endpoint_auth_method: 'client_secret_basic'
 
-      - client_id: filebrowser
-        client_name: FileBrowser Quantum
-        client_secret: $pbkdf2-sha512$310000$h.BE6vsoVSs71jw5QSkRAg$6Q8NtKlzfjFjbuxPdGdN3LO2jjdly/aiJUFdreSTKIHVA4sVzNRc0k3AfdHw6.sbnvpwO8.2LAXKTb6wviJGyg
-        public: false
-        authorization_policy: no_2fa
-        require_pkce: false
-        pkce_challenge_method: ''
-        redirect_uris:
-          - 'https://filebrowser.aut.zachneill.com/api/auth/oidc/callback'
-        scopes:
-          - 'openid'
-          - 'profile'
-          - 'groups'
-          - 'email'
-        response_types:
-          - 'code'
-        grant_types:
-          - 'authorization_code'
-        access_token_signed_response_alg: 'none'
-        userinfo_signed_response_alg: 'none'
-        token_endpoint_auth_method: 'client_secret_basic'
-
       - client_id: 'forgejo'
         client_name: 'Forgejo'
-        client_secret: '$pbkdf2-sha512$310000$ZNHedtuWS53pVoSlI.h0EQ$EUTjLsPS7qWdg6yo3/mGwObXhkOVVkMXYOC/Zgun1hUUO9tw1YHPbQHjQaYPAxhLEnecdN7xGn2zzvds9QbNsA'
+        client_secret: '$pbkdf2-sha512$310000$h.BE6vsoVSs71jw5QSkRAg$6Q8NtKlzfjFjbuxPdGdN3LO2jjdly/aiJUFdreSTKIHVA4sVzNRc0k3AfdHw6.sbnvpwO8.2LAXKTb6wviJGyg'
         public: false
         claims_policy: forgejo
         authorization_policy: no_2fa
